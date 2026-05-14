@@ -3,8 +3,5 @@
     "description": "Integrates Autoaddress.com with Webforms using environment-based API keys.",
     "type": "drupal-module",
     "license": "GPL-2.0-or-later",
-    "minimum-stability": "dev",
-    "require": {
-        "drupal/webform": "^6.2"
-    }
+    "minimum-stability": "dev"
 }
