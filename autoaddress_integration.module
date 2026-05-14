@@ -11,12 +11,15 @@ use Drupal\Core\Form\FormStateInterface;
  * Implements hook_form_alter().
  */
 function autoaddress_integration_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Check if the current form is a webform submission.
+  // Only act if this is a webform submission.
   if (strpos($form_id, 'webform_submission') !== false) {
-    // Attach the library.
-    $form['#attached']['library'][] = 'autoaddress_integration/autoaddress-sdk';
     
-    // Pass the API key from an environment variable to drupalSettings.
-    // 'AUTOADDRESS_API_KEY' in .env and ddev config.yml
-    $form['#attached']['drupalSettings']['autoaddress_integration']['api_key'] = getenv('AUTOADDRESS_API_KEY');  }
+    // 1. Attach the library.
+    $form['#attached']['library'][] = 'autoaddress_integration/autoaddress-sdk';
+
+    // 2. Get the config (The drupal way suggested by Stephen).
+    $config = \Drupal::config('autoaddress_integration.settings');
+
+    // 3. Pass the key to JS using the same name your JS expects (apiKey).
+    $form['#attached']['drupalSettings']['autoaddress_integration']['api_key'] = $config->get('api_key');
 }
