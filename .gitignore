@@ -1,0 +1,17 @@
+# OS junk files
+.DS_Store
+Thumbs.db
+*.swp
+
+# IDEs and editors
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# PHP specific
+.phpunit.result.cache
+vendor/
+
+# Drupal specific (if you run local tests/builds)
+upgrade-status-json.php

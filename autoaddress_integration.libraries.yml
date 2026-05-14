@@ -1,0 +1,14 @@
+autoaddress-sdk:
+  remote: https://www.autoaddress.com
+  license:
+    name: Proprietary
+    url: https://www.autoaddress.com/terms
+  js:
+    https://integrations.autoaddress.com/jscontrol/autoaddress.min.js: { type: external, minified: true }
+    js/autoaddress-init.js: {}
+  css:
+    theme:
+      https://integrations.autoaddress.com/jscontrol/autoaddress-style.css: { type: external }
+  dependencies:
+    - core/drupal
+    - core/once
