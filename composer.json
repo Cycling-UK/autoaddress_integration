@@ -1,5 +1,5 @@
 {
-    "name": "sachawellborn/autoaddress_integration",
+    "name": "cycling-uk/autoaddress_integration",
     "description": "Integrates Autoaddress.com with Webforms using environment-based API keys.",
     "type": "drupal-module",
     "license": "GPL-2.0-or-later",
