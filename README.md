@@ -1,6 +1,6 @@
 # Autoaddress Integration
 
-### The very basic basics"
+### The very basic basics:
 
 1. Enable this custom __autoaddress_integration__ module
 
