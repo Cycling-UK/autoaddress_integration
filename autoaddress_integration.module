@@ -22,4 +22,5 @@ function autoaddress_integration_form_alter(&$form, FormStateInterface $form_sta
 
     // 3. Pass the key to JS using the same name your JS expects (apiKey).
     $form['#attached']['drupalSettings']['autoaddress_integration']['api_key'] = $config->get('api_key');
+  }
 }
