@@ -12,3 +12,4 @@ autoaddress-sdk:
   dependencies:
     - core/drupal
     - core/once
+    - core/drupalSettings

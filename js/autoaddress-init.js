@@ -39,7 +39,7 @@
                             'city': addr.city ? addr.city.value : '',
                             'postal_code': addr.postcode ? addr.postcode.value : '',
                             'state_province': addr.region ? addr.region.value : '', // UK County
-                            'country': addr.country ? addr.country.iso : ''      // ISO Country Name
+                            'country': addr.country ? addr.country.value : ''      // Fixes Flaw B: Full Name
                         };
 
                         for (const [key, value] of Object.entries(mapping)) {
