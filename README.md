@@ -271,6 +271,8 @@ Check that the data-target-field value exactly matches the address element's mac
 
 Confirm the key has been supplied by the hosting environment \- check settings.local.php (local) or the relevant environment variable / Key module entry (hosted). Check the browser developer console for network errors on calls to integrations.autoaddress.com.
 
+__See below for guidance on configuring the key in a local ddev environment.__
+
 **The module is on a multi-page webform and the widget disappears after navigating between pages.**
 
 This is handled by the once() utility combined with Drupal's attach() behaviour. Drupal re-runs attach() on each page of a multi-step webform, but once() ensures the widget is only initialised once per element, preventing duplication. If the container element is re-rendered on each page, the once() guard will allow re-initialisation correctly.
@@ -281,7 +283,9 @@ Edit js/autoaddress-init.js. Extend the mapping object in the onAddressResult ca
 
 **Is an API key required for development / testing?**
 
-Yes \- Autoaddress requires a valid API key for all requests, including during development. Autoaddress.com provides test/sandbox keys for development use.
+Yes \- Autoaddress requires a valid API key for all requests, including during development. Autoaddress.com provides test/sandbox keys for development use. 
+
+__See below for guidance on configuring the key in a local ddev environment.__
 
 ### **7\.  Security Notes**
 
@@ -292,5 +296,62 @@ Yes \- Autoaddress requires a valid API key for all requests, including during d
 * Never commit the API key to version control. Use environment variables or Drupal's settings.php override pattern (see section 3.5).
 
 * The module does not store or log any address data itself \- all data is sent directly from the browser to Autoaddress's API and back.
+
+
+## Configuring the AutoAddress API Key for local development with ddev
+
+AutoAddress is used for address lookup. To use it locally, you need to add your API key to your ddev environment. This is kept out of version control.
+
+### Steps
+
+**1\. Get the API key**
+
+Log in to [autoaddress.com](https://autoaddress.com) and copy the licence key.
+
+**2\. Create (or open) `.ddev/config.local.yaml`**
+
+This file is gitignored and is the correct place for local secrets. If it doesn't exist yet, create it:
+
+touch .ddev/config.local.yaml
+
+**3\. Add the API key**
+
+Open `.ddev/config.local.yaml` and add the following, replacing the placeholder with your actual key:
+```
+web_environment:
+
+  - AUTOADDRESS_API_KEY=your_key_here
+```
+⚠️ If you already have a `web_environment` block in the file, just add the new line to it rather than creating a second block.
+
+**4\. Restart ddev**
+
+ddev restart
+
+**5\. Verify it worked**
+
+ddev exec printenv AUTOADDRESS\_API\_KEY
+
+This should print your key. If it returns nothing, double-check the file is named `.yaml` (not `.yml`) and that the `web_environment` block is formatted correctly.  
+
+## Connecting the API key to Drupal
+
+Putting the key in ddev makes it available as an environment variable inside the container, but Drupal also needs to be told to use it. This is done in `settings.local.php`.
+
+Drupal stores the AutoAddress API key in its configuration system under `autoaddress_integration.settings`. 
+
+The following line overrides that database value at runtime by reading the key from the environment variable you set above:
+
+`$config['autoaddress_integration.settings']['api_key'] = getenv('AUTOADDRESS_API_KEY');`
+
+Add this line to your `web/sites/default/settings.local.php`. If that file doesn't exist yet, copy it from the example file:
+
+`cp docroot/sites/default/example.settings.local.php docroot/sites/default/settings.local.php`
+
+Then open it and add the line anywhere after the opening `<?php` tag.
+
+ℹ️ `settings.local.php` is gitignored, so this change stays on your machine only. This is intentional - it means each developer's local key never gets committed to the repository.  
+
+
 
 *End of document*
