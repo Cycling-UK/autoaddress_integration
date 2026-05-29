@@ -33,6 +33,20 @@ The container needs to know which address field it should populate. You do this 
 
 Note: The steps above describe the Webform UI approach. The same result can be achieved through other methods, such as editing configuration directly.
 
+## Required csp update
+
+Add the following into the _**enforced**_ configuration of the content security module:
+
+### connect-src - add these two domains:
+
+<!-- -->https://api.autoaddress.com
+<!-- -->https://integrations.autoaddress.com
+
+
+### img-src - add this domain:
+
+<!-- -->https://integrations.autoaddress.com
+
 ## **Module explanation:**
 
 ### **1\.  What Does This Module Do?**
