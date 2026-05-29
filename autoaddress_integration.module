@@ -6,21 +6,47 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\csp\Csp;
+
+/**
+ * Implements hook_csp_policy_alter().
+ *
+ * Automatically bundles Autoaddress CSP requirements into the site's policy.
+ */
+function autoaddress_integration_csp_policy_alter(Csp $policy) {
+  // 1. Allow the library script to be downloaded from their CDN
+  if ($policy->hasDirective('script-src')) {
+    $policy->fallbackAwareAppendValue('script-src', 'integrations.autoaddress.com');
+  }
+
+  // 2. Allow API fetch connections to execute
+  if ($policy->hasDirective('connect-src')) {
+    $policy->fallbackAwareAppendValue('connect-src', 'api.autoaddress.com');
+    // If they make backup/fallback API calls to the integration subdomain:
+    $policy->fallbackAwareAppendValue('connect-src', 'integrations.autoaddress.com');
+  }
+
+  // 3. Allow frames if the Autoaddress control relies on iframe components
+  if ($policy->hasDirective('frame-src')) {
+    $policy->fallbackAwareAppendValue('frame-src', 'integrations.autoaddress.com');
+  }
+}
 
 /**
  * Implements hook_form_alter().
  */
 function autoaddress_integration_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Only act if this is a webform submission.
-  if (strpos($form_id, 'webform_submission') !== false) {
-    
-    // 1. Attach the library.
+  // This looks for any webform submission form. 
+  // You can also use: if ($form_id == 'webform_submission_YOUR_FORM_ID_add_form') 
+  if (strpos($form_id, 'webform_submission') !== FALSE) {
+    // 1. Attach your frontend library SDK.
     $form['#attached']['library'][] = 'autoaddress_integration/autoaddress-sdk';
 
-    // 2. Get the config (The drupal way suggested by Stephen).
+    // 2. Load the configuration that was set by getenv() in settings.local.php.
     $config = \Drupal::config('autoaddress_integration.settings');
+    $api_key = $config->get('api_key') ?: '';
 
-    // 3. Pass the key to JS using the same name your JS expects (apiKey).
-    $form['#attached']['drupalSettings']['autoaddress_integration']['api_key'] = $config->get('api_key');
+    // 3. Pass the API key to the frontend via drupalSettings.
+    $form['#attached']['drupalSettings']['autoaddressIntegration']['apiKey'] = $api_key;
   }
 }
