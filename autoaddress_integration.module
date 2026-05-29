@@ -6,43 +6,6 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\csp\Csp;
-
-
-/**
- * Implements hook_csp_policy_alter().
- *
- * Automatically bundles Autoaddress CSP requirements into the site's policy.
- */
-function autoaddress_integration_csp_policy_alter(Csp $policy) {
-  // Script fallback (Safe to append because the SDK library won't execute without it)
-  if ($policy->hasDirective('script-src')) {
-    $policy->fallbackAwareAppendValue('script-src', 'integrations.autoaddress.com');
-  }
-
-  // Define the critical directives that need explicit exceptions
-  $directives = [
-    'connect-src' => ['api.autoaddress.com', 'integrations.autoaddress.com'],
-    'frame-src'   => ['integrations.autoaddress.com'],
-    'img-src'     => ['integrations.autoaddress.com'],
-  ];
-
-  foreach ($directives as $directive => $domains) {
-    // If the directive doesn't exist, build it from default-src so we don't cause massive breakages
-    if (!$policy->hasDirective($directive)) {
-      if ($policy->hasDirective('default-src')) {
-        $policy->setDirective($directive, $policy->getDirective('default-src'));
-      } else {
-        $policy->setDirective($directive, ["'self'"]);
-      }
-    }
-
-    // Append all required domains safely to the active directive stack
-    foreach ($domains as $domain) {
-      $policy->appendValue($directive, $domain);
-    }
-  }
-}
 
 /**
  * Implements hook_form_alter().
